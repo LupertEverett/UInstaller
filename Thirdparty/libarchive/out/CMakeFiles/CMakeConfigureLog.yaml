@@ -1,0 +1,103 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineSystem.cmake:211 (message)"
+      - "CMakeLists.txt:17 (PROJECT)"
+    message: |
+      The system is: Windows - 10.0.26100 - AMD64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:17 (PROJECT)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      1
+      .NET Framework i├ğin MSBuild s├╝r├╝m 17.12.6+db5f6012c
+      Olu┼şturma ba┼şlat─▒ld─▒: 27.11.2024 23:41:56.
+      
+      1 d├╝─ş├╝m├╝nde "D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.vcxproj" projesi (varsay─▒lan hedefler).
+      PrepareForBuild:
+        "Debug\\" dizini olu┼şturuluyor.
+        Yap─▒land─▒r─▒lm─▒┼ş ├ğ─▒k─▒┼ş etkinle┼ştirildi. Derleyici tan─▒lamas─▒n─▒n bi├ğimlendirmesi hata hiyerar┼şisini yans─▒t─▒r. Daha fazla ayr─▒nt─▒ i├ğin bkz. https://aka.ms/cpp/structured-output.
+        "Debug\\CompilerIdC.tlog\\" dizini olu┼şturuluyor.
+      InitializeBuildStatus:
+        "AlwaysCreate" belirtildi─şi i├ğin "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" olu┼şturuluyor.
+        "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" ├Â─şesine eri┼şiliyor.
+      ClCompile:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TC /FC /errorReport:queue CMakeCCompilerId.c
+        CMakeCCompilerId.c
+      Link:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
+        CompilerIdC.vcxproj -> D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.exe
+      C:\\Program Files (x86)\\VisualD\\msbuild\\dcompile.targets(382,11): error MSB4057: "ComputeLinkImportLibraryOutputsForClean" hedefi projede yok. [D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.vcxproj]
+      "D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.vcxproj" Projesini Olu┼şturma ─░┼şlemi Tamamland─▒ (varsay─▒lan hedefler) -- BA┼ŞARISIZ OLDU.
+      
+      Olu┼şturma BA┼ŞARISIZ OLDU.
+      
+      "D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.vcxproj" (varsay─▒lan hedef) (1) ->
+        C:\\Program Files (x86)\\VisualD\\msbuild\\dcompile.targets(382,11): error MSB4057: "ComputeLinkImportLibraryOutputsForClean" hedefi projede yok. [D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.vcxproj]
+      
+          0 Uyar─▒
+          1 Hata
+      
+      Ge├ğen S├╝re 00:00:00.83
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.27/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:17 (PROJECT)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      1
+      .NET Framework i├ğin MSBuild s├╝r├╝m 17.12.6+db5f6012c
+      Olu┼şturma ba┼şlat─▒ld─▒: 27.11.2024 23:41:57.
+      
+      1 d├╝─ş├╝m├╝nde "D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.vcxproj" projesi (varsay─▒lan hedefler).
+      PrepareForBuild:
+        "Debug\\" dizini olu┼şturuluyor.
+        Yap─▒land─▒r─▒lm─▒┼ş ├ğ─▒k─▒┼ş etkinle┼ştirildi. Derleyici tan─▒lamas─▒n─▒n bi├ğimlendirmesi hata hiyerar┼şisini yans─▒t─▒r. Daha fazla ayr─▒nt─▒ i├ğin bkz. https://aka.ms/cpp/structured-output.
+        "Debug\\CompilerIdC.tlog\\" dizini olu┼şturuluyor.
+      InitializeBuildStatus:
+        "AlwaysCreate" belirtildi─şi i├ğin "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" olu┼şturuluyor.
+        "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" ├Â─şesine eri┼şiliyor.
+      ClCompile:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TC /FC /errorReport:queue CMakeCCompilerId.c
+        CMakeCCompilerId.c
+      Link:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
+        CompilerIdC.vcxproj -> D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.exe
+      C:\\Program Files (x86)\\VisualD\\msbuild\\dcompile.targets(382,11): error MSB4057: "ComputeLinkImportLibraryOutputsForClean" hedefi projede yok. [D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.vcxproj]
+      "D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.vcxproj" Projesini Olu┼şturma ─░┼şlemi Tamamland─▒ (varsay─▒lan hedefler) -- BA┼ŞARISIZ OLDU.
+      
+      Olu┼şturma BA┼ŞARISIZ OLDU.
+      
+      "D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.vcxproj" (varsay─▒lan hedef) (1) ->
+        C:\\Program Files (x86)\\VisualD\\msbuild\\dcompile.targets(382,11): error MSB4057: "ComputeLinkImportLibraryOutputsForClean" hedefi projede yok. [D:\\Programlama\\K├╝t├╝phaneler\\C-C++\\libarchive\\libarchive-3.7.7\\out\\CMakeFiles\\3.27.4\\CompilerIdC\\CompilerIdC.vcxproj]
+      
+          0 Uyar─▒
+          1 Hata
+      
+      Ge├ğen S├╝re 00:00:00.51
+      
+      
+...
