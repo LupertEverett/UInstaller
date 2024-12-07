@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 // TODO: Less-platform-dependent community patches download links?
 // TODO: Any kind of integrity checking???
