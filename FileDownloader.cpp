@@ -16,7 +16,7 @@ void FileDownloader::DownloadFile(InstallData& installData, std::string targetFo
 	if (fs::exists("cache") && fs::is_directory("cache"))
 	{
 		fs::path p("cache/" + m_installData.fileName);
-		if (QFile::exists(p))
+		if (QFile::exists(p) && fs::file_size(p) == installData.fileSize)
 		{
 			// We already have it downloaded here
 			emit fileDownloaded(p.string());
