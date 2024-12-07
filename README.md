@@ -42,6 +42,7 @@ Coming soon!
 
 * Qt6
 * libarchive
+* zlib (so that libarchive extracts binary files correctly)
 
 ## License
 
@@ -50,3 +51,4 @@ License info for this program, as well as the components it uses are available i
 * [License for UInstaller](/Licenses/LICENSE-UINSTALLER)
 * [License for libarchive](/Licenses/LICENSE-LIBARCHIVE)
 * [License for Qt](/Licenses/LICENSE-QT)
+* [License for zlib](/Licenses/LICENSE-ZLIB)

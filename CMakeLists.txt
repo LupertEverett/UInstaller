@@ -16,6 +16,12 @@ find_package(Qt${QT_VERSION_MAJOR}
 )
 qt_standard_project_setup()
 
+# Least painful way to build libarchive with zlib support
+# Which is necessary if we want to extract binary files correctly
+set(ZLIB_ROOT Thirdparty/zlib)
+find_package(zlib REQUIRED)
+
+include_directories(UInstaller Thirdparty/libarchive/libarchive Thirdparty/zlib "${CMAKE_CURRENT_BINARY_DIR}/zlib_build")
 add_subdirectory(Thirdparty/libarchive)
 
 set(PROJECT_SOURCES
