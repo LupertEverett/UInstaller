@@ -4,7 +4,7 @@
 
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
-#include <QtCore/QURL>
+#include <QtCore/QUrl>
 //#include <QtCore/QSaveFile>
 #include <QtCore/QFile>
 
