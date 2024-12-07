@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-// TODO: Will we need to use requiredDiskSpace at all???
 // TODO: Less-platform-dependent community patches download links?
 // TODO: Any kind of integrity checking???
 
