@@ -33,12 +33,27 @@ You'll need the following installed:
 * Visual Studio 2022
 * Qt6 (Core, Gui, Widgets and Network components)
 * Qt Visual Studio Tools
+* CMake
 
-Once everything is installed, it is as simple as opening this folder as a CMake project in VS and compiling everything from there.
+Once everything is installed, it is as simple as cloning this repo, opening the resulting folder as a CMake project in VS and compiling everything from there.
 
 ### Linux
 
-Coming soon!
+You'll need CMake installed, as well as the following libraries, including their development packages:
+
+* zlib
+* Qt6
+
+(libarchive is included in the Thirdparty folder)
+
+Once you have the dependencies, the build process is as simple as following these commands in order:
+
+    git clone https://github.com/LupertEverett/UInstaller
+    cd UInstaller && mkdir build && cd build
+    cmake ..
+    make
+    
+The resulting UInstaller executable will be in the build folder.
 
 ## Components used
 
