@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.27)
 project(UInstaller LANGUAGES CXX)
 
 include(qt.cmake)
@@ -6,7 +6,7 @@ include(qt.cmake)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Network)
 find_package(Qt${QT_VERSION_MAJOR}
     COMPONENTS
         Core
@@ -19,7 +19,12 @@ qt_standard_project_setup()
 # Least painful way to build libarchive with zlib support
 # Which is necessary if we want to extract binary files correctly
 set(ZLIB_ROOT Thirdparty/zlib)
-find_package(zlib REQUIRED)
+find_package(zlib)
+
+if(!ZLIB_FOUND)
+    include(PkgConfig)
+    pkg_search_module(ZLIB REQUIRED zlib)
+endif()
 
 include_directories(UInstaller Thirdparty/libarchive/libarchive Thirdparty/zlib "${CMAKE_CURRENT_BINARY_DIR}/zlib_build")
 add_subdirectory(Thirdparty/libarchive)
