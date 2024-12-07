@@ -10,6 +10,8 @@ It uses:
 
 There is also an option to download Bonus Pack 4 when installing Unreal Tournament.
 
+![UInstaller Screenshot](https://i.imgur.com/MzCZRxd.png)
+
 ## Usage Instructions
 
 1. Download the 7z file appropriate for your platform
