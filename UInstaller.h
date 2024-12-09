@@ -11,6 +11,8 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QProgressBar>
 #include <QtGui/QDesktopServices>
+#include <QtCore/QThread>
+#include <QtCore/QProcess>
 
 #include "InstallData.h"
 #include "FileDownloader.h"
@@ -34,8 +36,12 @@ private:
     void ExtractISOFile(std::string& downloadedISOPath);
 
     void PerformPostExtraction();
-    void RenameRootFolders(); // Make all the root folders (Maps, System, etc.) Capital Case
+    static void RenameRootFolders(fs::path rootFolderPath); // Make all the root folders (Maps, System, etc.) Capital Case
     void CleanupSystemFolder(); // Clean the system folder from translation files
+
+    // UT ISO comes with the map files compressed.
+    // This function will call ucc decompress on all the maps.
+    static void DecompressMapFiles(fs::path rootFolderPath);
 
     void AllDone();
 

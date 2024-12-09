@@ -160,6 +160,8 @@ void UInstaller::handleDownloadProgress(qint64 downloaded, qint64 total)
 
 void UInstaller::handleDownloadFinished(std::string downloadedFilePath)
 {
+    ExtractISOFile(downloadedFilePath);
+    /*
     try
     {
         ExtractISOFile(downloadedFilePath);
@@ -169,7 +171,7 @@ void UInstaller::handleDownloadFinished(std::string downloadedFilePath)
         QMessageBox::critical(this, "Error", e.what(), QMessageBox::Ok);
         m_StatusLabel->setText("Status: Idle");
         SetEnableForAllFields(true);
-    }
+    }*/
 }
 
 void UInstaller::handleCommunityPatchDownloadProgress(qint64 downloaded, qint64 total)
@@ -231,7 +233,15 @@ void UInstaller::ExtractISOFile(std::string& downloadedISOPath)
 
 void UInstaller::PerformPostExtraction()
 {
-    RenameRootFolders();
+    fs::path gameRootPath(m_TargetPathLineEdit->text().toStdString());
+    gameRootPath /= m_CurrentInstallData->gameFolderName;
+
+    RenameRootFolders(gameRootPath);
+    if (m_CurrentInstallData == &UnrealTournamentInstallData)
+    {
+        m_StatusLabel->setText("Decompressing maps, this can take a while.");
+        DecompressMapFiles(gameRootPath);
+    }
 
     if (m_InstallCommunityPatchCheckBox->isChecked())
     {
@@ -262,15 +272,10 @@ void UInstaller::AllDone()
     SetEnableForAllFields(true);
 }
 
-void UInstaller::RenameRootFolders()
+void UInstaller::RenameRootFolders(fs::path gameRootFolderPath)
 {
-    fs::path extracted_path(m_TargetPathLineEdit->text().toStdString());
-
-    extracted_path /= m_CurrentInstallData->gameFolderName;
-
     // Make all the root folders lowercase.
-
-    auto dirIter = fs::directory_iterator(extracted_path);
+    auto dirIter = fs::directory_iterator(gameRootFolderPath);
 
     for (auto& dir : dirIter)
     {
@@ -282,7 +287,10 @@ void UInstaller::RenameRootFolders()
 
             std::transform(dirName.begin() + 1, dirName.end(), dirName.begin() + 1, [](unsigned char c) { return std::tolower(c); });
 
-            fs::rename(dirPath, dirParent / dirName);
+            // Only rename the folder if the folder isn't renamed already
+            // Avoids an error in the cases you're trying to "override" an installation
+            if (dirName != dirPath.filename().string())
+                fs::rename(dirPath, dirParent / dirName);
         }
     }
 }
@@ -309,6 +317,45 @@ void UInstaller::CleanupSystemFolder()
                     break;
                 }
             }
+        }
+    }
+}
+
+void UInstaller::DecompressMapFiles(fs::path gameRootPath)
+{   
+    fs::path systemPath = gameRootPath / "System";
+    fs::path mapsPath = gameRootPath / "Maps";
+
+    std::vector<fs::path> compressedMapPaths;
+
+    auto mapDirIter = fs::directory_iterator(mapsPath);
+
+    for (auto& entry : mapDirIter)
+    {
+        if (entry.is_regular_file() && entry.path().extension() == ".uz")
+        {
+            QString commandString(systemPath.c_str());
+            commandString += "/ucc.exe decompress " + entry.path().string();
+
+            QProcess process;
+            process.startCommand(commandString);
+            process.waitForFinished();
+
+            // Remove the compressed files from Maps folder once the decompression is done
+            fs::remove(entry.path());
+        }
+    }
+
+    // At this point, we should have all the maps decompressed in the System folder
+    // Move them back to Maps folder
+    auto systemDirIter = fs::directory_iterator(systemPath);
+
+    for (auto& entry : systemDirIter)
+    {
+        if (entry.is_regular_file() && entry.path().extension() == ".unr")
+        {
+            fs::copy(entry.path(), mapsPath / entry.path().filename(), fs::copy_options::update_existing);
+            fs::remove(entry.path());
         }
     }
 }
