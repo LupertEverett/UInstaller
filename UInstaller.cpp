@@ -160,8 +160,6 @@ void UInstaller::handleDownloadProgress(qint64 downloaded, qint64 total)
 
 void UInstaller::handleDownloadFinished(std::string downloadedFilePath)
 {
-    ExtractISOFile(downloadedFilePath);
-    /*
     try
     {
         ExtractISOFile(downloadedFilePath);
@@ -171,7 +169,7 @@ void UInstaller::handleDownloadFinished(std::string downloadedFilePath)
         QMessageBox::critical(this, "Error", e.what(), QMessageBox::Ok);
         m_StatusLabel->setText("Status: Idle");
         SetEnableForAllFields(true);
-    }*/
+    }
 }
 
 void UInstaller::handleCommunityPatchDownloadProgress(qint64 downloaded, qint64 total)
