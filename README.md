@@ -24,6 +24,14 @@ There is also an option to download Bonus Pack 4 when installing Unreal Tourname
 
 (Note: Downloaded files are kept in the cache folder of where UInstaller is ran)
 
+## Troubleshooting
+
+### Missing libbz2.so.1.0 on Fedora Linux
+
+Making a symbolic link to the """missing""" library fixes the issue:
+
+    ln -s /usr/lib64/libbz2.so.1.0.8 /usr/lib64/libbz2.so.1.0
+
 ## Build Instructions
 
 ### Windows
