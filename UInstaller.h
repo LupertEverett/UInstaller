@@ -98,4 +98,6 @@ private slots:
     void handleISOExtractionFinished();
     void handleCommunityPatchExtractionFinished();
     void handleBP4ExtractionFinished();
+
+    void handleLinuxFolderExtractionErrors(fs::path gameRootPath);
 };

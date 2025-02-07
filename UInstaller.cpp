@@ -235,6 +235,9 @@ void UInstaller::PerformPostExtraction()
     gameRootPath /= m_CurrentInstallData->gameFolderName;
 
     RenameRootFolders(gameRootPath);
+#ifndef WIN32
+    handleLinuxFolderExtractionErrors(gameRootPath);
+#endif
     if (m_CurrentInstallData == &UnrealTournamentInstallData)
     {
         m_StatusLabel->setText("Decompressing maps, this can take a while.");
@@ -243,7 +246,6 @@ void UInstaller::PerformPostExtraction()
 
     if (m_InstallCommunityPatchCheckBox->isChecked())
     {
-        // TODO: Also handle installing community patches
         m_CommunityPatchDownloader->DownloadFile(*m_CurrentCommunityPatchInstallData, "");
         CleanupSystemFolder();
     }
@@ -355,6 +357,37 @@ void UInstaller::DecompressMapFiles(fs::path gameRootPath)
             fs::copy(entry.path(), mapsPath / entry.path().filename(), fs::copy_options::update_existing);
             fs::remove(entry.path());
         }
+    }
+}
+
+/* For some reason, extracted folders under Linux can have strange case-sensitivity translation errors 
+ * This function aims to "fix" this.
+ */
+void UInstaller::handleLinuxFolderExtractionErrors(fs::path gameRootPath)
+{
+    auto borked_music_folder = gameRootPath / "MusIc";
+    auto borked_systemlocalized_folder = gameRootPath / "SystemlocalIzed";
+    auto borked_directx7_folder = gameRootPath / "DIrectx7";
+
+    if (fs::exists(borked_music_folder) && fs::is_directory(borked_music_folder))
+    {
+        // Copy everything within "MusIc" folder to "Music" folder
+        fs::copy(borked_music_folder, gameRootPath/"Music", fs::copy_options::recursive);
+
+        // Remove the MusIc folder once the copy is done
+        fs::remove_all(borked_music_folder);
+    }
+
+    if (fs::exists(borked_systemlocalized_folder) && fs::is_directory(borked_systemlocalized_folder))
+    {
+        // Simply remove this one, there don't seem to be anything worthwhile in it.
+        fs::remove_all(borked_systemlocalized_folder);
+    }
+
+    if (fs::exists(borked_directx7_folder) && fs::is_directory(borked_directx7_folder))
+    {
+        // Ditto.
+        fs::remove_all(borked_directx7_folder);
     }
 }
 
