@@ -5,11 +5,13 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include <iostream>
 
 UInstaller::UInstaller(QWidget* parent)
-    : QWidget(parent), 
+    : QWidget(parent),
     m_CurrentInstallData(&UnrealGoldInstallData),
-    m_CurrentCommunityPatchInstallData(&UG227kInstallData),
+    m_CurrentCommunityPatchInstallData(nullptr),
+    m_CurrentBonusPackInstallData(&UGFusionMapPackInstallData),
     m_fileDownloader(new FileDownloader(this)),
     m_CommunityPatchDownloader(new FileDownloader(this)),
     m_BonusPackDownloader(new FileDownloader(this)),
@@ -26,6 +28,10 @@ UInstaller::UInstaller(QWidget* parent)
     m_GamePickerComboBox->addItem("Unreal Gold");
     m_GamePickerComboBox->addItem("Unreal Tournament");
 
+    m_CommunityPatchPickerComboBox = new QComboBox();
+    PopulatePatchPicker();
+    m_CommunityPatchPickerComboBox->setEnabled(false);
+
     m_TargetPathLineEdit = new QLineEdit();
     m_TargetPathLineEdit->setEnabled(false);
 
@@ -40,8 +46,7 @@ UInstaller::UInstaller(QWidget* parent)
     m_StatusLabel = new QLabel("Status: Idle");
 
     m_InstallCommunityPatchCheckBox = new QCheckBox("Also install the community patches (227/469)?");
-    m_BonusPackCheckBox = new QCheckBox("Also install Bonus Pack 4 (UT only)?");
-    m_BonusPackCheckBox->setEnabled(false);
+    m_BonusPackCheckBox = new QCheckBox("Also install Fusion Map Pack?");
 
     prepareLayout();
     setupConnections();
@@ -60,9 +65,15 @@ void UInstaller::prepareLayout()
 
     game_picker_group_layout->addWidget(m_GamePickerComboBox);
 
+    patch_picker_group_layout = new QHBoxLayout(this);
+
+    patch_picker_group_layout->addWidget(new QLabel("Select Patch:"));
+    patch_picker_group_layout->addWidget(m_CommunityPatchPickerComboBox);
+
     game_settings_group_layout = new QVBoxLayout(this);
 
     game_settings_group_layout->addWidget(m_InstallCommunityPatchCheckBox);
+    game_settings_group_layout->addLayout(patch_picker_group_layout);
     game_settings_group_layout->addWidget(m_BonusPackCheckBox);
 
     m_GamePickerGroupBox->setLayout(game_picker_group_layout);
@@ -92,6 +103,9 @@ void UInstaller::prepareLayout()
 void UInstaller::setupConnections()
 {
     connect(m_GamePickerComboBox, &QComboBox::currentIndexChanged, this, &UInstaller::handleGamePickerSelectionChanged);
+    connect(m_CommunityPatchPickerComboBox, &QComboBox::currentIndexChanged, this, &UInstaller::handleCommunityPatchPickerSelectionChanged);
+
+    connect(m_InstallCommunityPatchCheckBox, &QCheckBox::toggled, this, &UInstaller::handleCommunityPatchCheckboxToggled);
 
     connect(m_TargetPathLineEdit, &QLineEdit::textChanged, this, &UInstaller::handleTargetPathLineEditChanged);
 
@@ -118,15 +132,50 @@ void UInstaller::handleGamePickerSelectionChanged()
     if (choice == "Unreal Gold")
     {
         m_CurrentInstallData = &UnrealGoldInstallData;
-        m_CurrentCommunityPatchInstallData = &UG227kInstallData;
-        m_BonusPackCheckBox->setEnabled(false);
+        //m_CurrentCommunityPatchInstallData = &UG227kInstallData;
+        m_CurrentBonusPackInstallData = &UGFusionMapPackInstallData;
+        m_BonusPackCheckBox->setText("Also install Fusion Map Pack?");
     }
     else
     {
         m_CurrentInstallData = &UnrealTournamentInstallData;
-        m_CurrentCommunityPatchInstallData = &UT469dInstallData;
-        m_BonusPackCheckBox->setEnabled(true);
+        //m_CurrentCommunityPatchInstallData = &UT469dInstallData;
+        m_CurrentBonusPackInstallData = &UTBonusPack4InstallData;
+        m_BonusPackCheckBox->setText("Also install Bonus Pack 4?");
     }
+
+    PopulatePatchPicker();
+}
+
+void UInstaller::PopulatePatchPicker()
+{
+    m_CommunityPatchPickerComboBox->clear();
+
+    auto selectedGame = m_GamePickerComboBox->currentText();
+
+    std::vector<std::string> patchesListStr = getPatchesList(selectedGame.toStdString());
+
+    QStringList patchesListQStr;
+
+    for (auto& patch : patchesListStr)
+    {
+        patchesListQStr.push_back(QString(patch.c_str()));
+    }
+
+    m_CommunityPatchPickerComboBox->addItems(patchesListQStr);
+
+    handleCommunityPatchPickerSelectionChanged();
+}
+
+void UInstaller::handleCommunityPatchPickerSelectionChanged()
+{
+    auto selectedPatch = m_CommunityPatchPickerComboBox->currentText();
+    m_CurrentCommunityPatchInstallData = getPatchData(selectedPatch.toStdString());
+}
+
+void UInstaller::handleCommunityPatchCheckboxToggled(bool toggle)
+{
+    m_CommunityPatchPickerComboBox->setEnabled(toggle);
 }
 
 void UInstaller::handleTargetPathLineEditChanged()
@@ -191,19 +240,31 @@ void UInstaller::handleCommunityPatchDownloadFinished(std::string downloadedFile
 
 void UInstaller::handleBonusPackDownloadFinished(std::string downloadedFilePath)
 {
-    m_StatusLabel->setText("Status: Extracting Bonus Pack 4");
+    m_StatusLabel->setText("Status: Extracting Bonus Pack");
     
     // Extract all of the content to a subfolder instead
     fs::path finalPath(m_TargetPathLineEdit->text().toStdString());
     finalPath /= m_CurrentInstallData->gameFolderName;
+
+    // Fusion Map Pack should be extracted to Maps folder
+    if (m_CurrentBonusPackInstallData == &UGFusionMapPackInstallData)
+        finalPath /= "Maps";
 
     m_BonusPackExtractor->ExtractTo(downloadedFilePath, finalPath.string());
 }
 
 void UInstaller::handleCommunityPatchExtractionFinished()
 {
-    if (m_CurrentInstallData == &UnrealTournamentInstallData && m_BonusPackCheckBox->isChecked())
-        m_BonusPackDownloader->DownloadFile(UTBonusPack4InstallData, "");
+    if (m_CurrentInstallData == &UnrealTournamentInstallData)
+    {
+        auto gameRootPathStr = m_TargetPathLineEdit->text() + QString(m_CurrentInstallData->gameFolderName.c_str());
+        fs::path gameRootPath(gameRootPathStr.toStdString());
+
+        m_StatusLabel->setText("Decompressing maps, this can take a while.");
+        DecompressMapFiles(gameRootPath);
+    }
+    if (m_BonusPackCheckBox->isChecked())
+        m_BonusPackDownloader->DownloadFile(*m_CurrentBonusPackInstallData, "");
     else
         AllDone();
 }
@@ -238,20 +299,25 @@ void UInstaller::PerformPostExtraction()
 #ifndef WIN32
     handleLinuxFolderExtractionErrors(gameRootPath);
 #endif
+    CleanupSystemFolder();
+
     if (m_CurrentInstallData == &UnrealTournamentInstallData)
     {
-        m_StatusLabel->setText("Decompressing maps, this can take a while.");
         DecompressMapFiles(gameRootPath);
     }
 
+    handleOtherSettings();
+}
+
+void UInstaller::handleOtherSettings()
+{
     if (m_InstallCommunityPatchCheckBox->isChecked())
     {
         m_CommunityPatchDownloader->DownloadFile(*m_CurrentCommunityPatchInstallData, "");
-        CleanupSystemFolder();
     }
-    else if (m_CurrentInstallData == &UnrealTournamentInstallData && m_BonusPackCheckBox->isChecked())
+    else if (m_BonusPackCheckBox->isChecked())
     {
-        m_BonusPackDownloader->DownloadFile(UTBonusPack4InstallData, "");
+        m_BonusPackDownloader->DownloadFile(*m_CurrentBonusPackInstallData, "");
     }
     else
     {
@@ -322,42 +388,40 @@ void UInstaller::CleanupSystemFolder()
 }
 
 void UInstaller::DecompressMapFiles(fs::path gameRootPath)
-{   
-    fs::path systemPath = gameRootPath / "System";
+{
+    m_StatusLabel->setText("Decompressing maps, this can take a while.");
+
     fs::path mapsPath = gameRootPath / "Maps";
 
-    std::vector<fs::path> compressedMapPaths;
-
     auto mapDirIter = fs::directory_iterator(mapsPath);
+
+    QStringList argList;
+
+    argList += "decompress";
+
+    for (auto& entry: mapDirIter)
+    {
+        if (entry.is_regular_file() && entry.path().extension() == ".uz")
+            argList.push_back(QString(entry.path().c_str()));
+    }
+
+    // UZ COMES TO THE RESCUE!!!
+    QDir::setCurrent("uz");
+#ifdef WIN32
+    QProcess::execute("uz.exe", argList);
+#else
+    QProcess::execute("./uz", argList);
+#endif
+
+    // Remove the compressed files after the extraction is done.
+    mapDirIter = fs::directory_iterator(mapsPath);
 
     for (auto& entry : mapDirIter)
     {
         if (entry.is_regular_file() && entry.path().extension() == ".uz")
-        {
-            QString commandString(systemPath.c_str());
-            commandString += "/ucc.exe decompress " + entry.path().string();
-
-            QProcess process;
-            process.startCommand(commandString);
-            process.waitForFinished();
-
-            // Remove the compressed files from Maps folder once the decompression is done
             fs::remove(entry.path());
-        }
     }
 
-    // At this point, we should have all the maps decompressed in the System folder
-    // Move them back to Maps folder
-    auto systemDirIter = fs::directory_iterator(systemPath);
-
-    for (auto& entry : systemDirIter)
-    {
-        if (entry.is_regular_file() && entry.path().extension() == ".unr")
-        {
-            fs::copy(entry.path(), mapsPath / entry.path().filename(), fs::copy_options::update_existing);
-            fs::remove(entry.path());
-        }
-    }
 }
 
 /* For some reason, extracted folders under Linux can have strange case-sensitivity translation errors 
@@ -394,7 +458,7 @@ void UInstaller::handleLinuxFolderExtractionErrors(fs::path gameRootPath)
 void UInstaller::SetEnableForAllFields(bool value)
 {
     m_GamePickerComboBox->setEnabled(value);
-
+    m_CommunityPatchPickerComboBox->setEnabled(value);
     m_InstallCommunityPatchCheckBox->setEnabled(value);
     m_BonusPackCheckBox->setEnabled(value);
     m_StartInstallationButton->setEnabled(value);
