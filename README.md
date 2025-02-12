@@ -65,9 +65,10 @@ The resulting UInstaller executable will be in the build folder.
 
 ## Components used
 
-* Qt6
-* libarchive
-* zlib (so that libarchive extracts binary files correctly)
+* Qt6: https://www.qt.io/
+* libarchive: https://github.com/libarchive/libarchive
+* zlib (so that libarchive extracts binary files correctly): https://github.com/madler/zlib
+* UZ standalone .uz (de)compression library: https://github.com/SeriousBuggie/UZ/
 
 ## License
 
@@ -77,3 +78,4 @@ License info for this program, as well as the components it uses are available i
 * [License for libarchive](/Licenses/LICENSE-LIBARCHIVE)
 * [License for Qt](/Licenses/LICENSE-QT)
 * [License for zlib](/Licenses/LICENSE-ZLIB)
+* [License for UZ](/Licenses/LICENSE-UZ)
