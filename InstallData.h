@@ -16,6 +16,9 @@ struct InstallData {
 	// std::string sha1sum;
 };
 
+std::vector<std::string> getPatchesList(const std::string& gameName);
+InstallData* getPatchData(const std::string& patchName);
+
 static InstallData UnrealGoldInstallData = {
 	.gameName = "Unreal Gold",
 	.gameFolderName = "UnrealGold",
@@ -40,8 +43,15 @@ static InstallData UTBonusPack4InstallData = {
 	.fileSize = 14017081  // 13 MB
 };
 
-#ifdef WIN32
-static InstallData UG227kInstallData = {
+static InstallData UGFusionMapPackInstallData = {
+	.gameName = "UGoldFusionMapPack",
+	.gameFolderName = "UnrealGold",
+	.downloadURL = "https://unreal-archive-files.eu-central-1.linodeobjects.com/Unreal/MapPacks/F/3/d/ebaf0d/fusionmappack.zip",
+	.fileName = "fusionmappack.zip",
+	.fileSize = 2809153  // 2.7 MB
+};
+
+static InstallData UG227kInstallData_Win_x86 = {
 	.gameName = "UG227k_12",
 	.gameFolderName = "UnrealGold",
 	.downloadURL = "https://github.com/OldUnreal/Unreal-testing/releases/download/v227k_12/OldUnreal-UnrealPatch227k-Windows.zip",
@@ -49,15 +59,23 @@ static InstallData UG227kInstallData = {
 	.fileSize = 127703260  // 123 MB
 };
 
-static InstallData UT469dInstallData = {
+static InstallData UT469dInstallData_Win_x86 = {
 	.gameName = "UT469d",
 	.gameFolderName = "UnrealTournamentGOTY",
 	.downloadURL = "https://github.com/OldUnreal/UnrealTournamentPatches/releases/download/v469d/OldUnreal-UTPatch469d-Windows.zip",
 	.fileName = "OldUnreal-UTPatch469d-Windows.zip",
 	.fileSize = 75626393 // 73 MB
 };
-#else
-static InstallData UG227kInstallData = {
+
+static InstallData UT469eRC7InstallData_Win_x86 = {
+	.gameName = "UT469e_RC7",
+	.gameFolderName = "UnrealTournamentGOTY",
+	.downloadURL = "https://github.com/OldUnreal/UnrealTournamentPatches/releases/download/v469e-rc7/OldUnreal-UTPatch469e-Windows-x86.zip",
+	.fileName = "OldUnreal-UTPatch469e-Windows-x86.zip",
+	.fileSize = 106047233 // 101.1 MB
+};
+
+static InstallData UG227kInstallData_Lin_x86 = {
 	.gameName = "UG227k_12",
 	.gameFolderName = "UnrealGold",
 	.downloadURL = "https://github.com/OldUnreal/Unreal-testing/releases/download/v227k_12/OldUnreal-UnrealPatch227k-Linux.tar.bz2",
@@ -65,16 +83,37 @@ static InstallData UG227kInstallData = {
 	.fileSize = 126346305 // 121 MB
 };
 
-// amd64 builds will also have the x86 builds included, and doesn't differ much in file size
-// So let's just use em instead
-static InstallData UT469dInstallData = {
+static InstallData UT469dInstallData_Lin_x86 = {
+	.gameName = "UT469d",
+	.gameFolderName = "UnrealTournamentGOTY",
+	.downloadURL = "https://github.com/OldUnreal/UnrealTournamentPatches/releases/download/v469d/OldUnreal-UTPatch469d-Linux-x86.tar.bz2",
+	.fileName = "OldUnreal-UTPatch469d-Linux-x86.tar.bz2",
+	.fileSize = 74050863 // 70.6 MB
+};
+
+static InstallData UT469eRC7InstallData_Lin_x86 = {
+	.gameName = "UT469e_RC7",
+	.gameFolderName = "UnrealTournamentGOTY",
+	.downloadURL = "https://github.com/OldUnreal/UnrealTournamentPatches/releases/download/v469e-rc7/OldUnreal-UTPatch469e-Linux-x86.tar.bz2",
+	.fileName = "OldUnreal-UTPatch469e-Linux-x86.tar.bz2",
+	.fileSize = 74844494 // 71.4 MB
+};
+
+static InstallData UT469dInstallData_Lin_x64 = {
 	.gameName = "UT469d",
 	.gameFolderName = "UnrealTournamentGOTY",
 	.downloadURL = "https://github.com/OldUnreal/UnrealTournamentPatches/releases/download/v469d/OldUnreal-UTPatch469d-Linux-amd64.tar.bz2",
 	.fileName = "OldUnreal-UTPatch469d-Linux-amd64.tar.bz2",
 	.fileSize = 73973312 // 71 MB
 };
-#endif
+
+static InstallData UT469eRC7InstallData_Lin_x64 = {
+	.gameName = "UT469e_RC7",
+	.gameFolderName = "UnrealTournamentGOTY",
+	.downloadURL = "https://github.com/OldUnreal/UnrealTournamentPatches/releases/download/v469e-rc7/OldUnreal-UTPatch469e-Linux-amd64.tar.bz2",
+	.fileName = "OldUnreal-UTPatch469e-Linux-amd64.tar.bz2",
+	.fileSize = 75259066 // 71.8 MB
+};
 
 // Skip these files that has an exact name match
 static const std::vector<std::string> skipFiles = {

@@ -41,7 +41,11 @@ private:
 
     // UT ISO comes with the map files compressed.
     // This function will call ucc decompress on all the maps.
-    static void DecompressMapFiles(fs::path rootFolderPath);
+    void DecompressMapFiles(fs::path rootFolderPath);
+
+    void handleOtherSettings();
+
+    void PopulatePatchPicker();
 
     void AllDone();
 
@@ -49,6 +53,7 @@ private:
     QGroupBox* m_GameSettingsGroupBox;
 
     QComboBox* m_GamePickerComboBox;
+    QComboBox* m_CommunityPatchPickerComboBox;
 
     QProgressBar* m_DownloadProgressBar;
 
@@ -67,10 +72,12 @@ private:
     QVBoxLayout* main_layout;
     QHBoxLayout* bottom_button_layout;
     QVBoxLayout* game_picker_group_layout;
+    QHBoxLayout* patch_picker_group_layout;
     QVBoxLayout* game_settings_group_layout;
 
     InstallData* m_CurrentInstallData;
     InstallData* m_CurrentCommunityPatchInstallData;
+    InstallData* m_CurrentBonusPackInstallData;
 
     FileDownloader* m_fileDownloader;
     FileDownloader* m_CommunityPatchDownloader;
@@ -82,6 +89,8 @@ private:
 
 private slots:
     void handleGamePickerSelectionChanged();
+    void handleCommunityPatchPickerSelectionChanged();
+    void handleCommunityPatchCheckboxToggled(bool toggle);
 
     void handleTargetPathLineEditChanged();
 
