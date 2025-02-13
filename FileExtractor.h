@@ -20,14 +20,14 @@ public:
 
 	void ExtractTo(const std::string& pathToFile, const std::string& dstPath);
 
+	void OpenStreams();
+	void CloseStreams();
+
 signals:
 	void ExtractionFinished();
 
 private:
 	int copyData();
-	void OpenStreams();
-	void CloseStreams();
-
 	archive* m_Reader;
 	archive* m_Writer;
 };
