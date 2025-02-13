@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
-#include <iostream>
 
 UInstaller::UInstaller(QWidget* parent)
     : QWidget(parent),

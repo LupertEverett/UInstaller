@@ -46,10 +46,10 @@ add_subdirectory(Thirdparty/libarchive)
 
 set(PROJECT_SOURCES
     main.cpp
-    UInstaller.h
-    UInstaller.cpp
     InstallData.cpp
     InstallData.h
+    UInstaller.cpp
+    UInstaller.h
     FileDownloader.cpp
     FileDownloader.h
     FileExtractor.cpp
