@@ -10,9 +10,8 @@ It uses:
 
 There is also an option to download Bonus Pack 4 when installing Unreal Tournament.
 
-![UInstaller Windows Screenshot](https://i.imgur.com/pybDF0I.png)
-
-![UInstaller Linux Screenshot](https://i.imgur.com/XULw0CM.png)
+| ![UInstaller Windows Screenshot](https://i.imgur.com/pybDF0I.png) | ![UInstaller Linux Screenshot](https://i.imgur.com/XULw0CM.png) |
+|-------------------------------------------------------------------|-----------------------------------------------------------------|
 
 ## Usage Instructions
 
