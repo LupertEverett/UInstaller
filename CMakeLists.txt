@@ -80,6 +80,10 @@ target_link_libraries(UInstaller
 # Copy the Licenses over
 add_custom_command(TARGET UInstaller POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/Licenses/" $<TARGET_FILE_DIR:UInstaller>/Licenses)
 
+# Copy the CHANGELOG and README over
+add_custom_command(TARGET UInstaller POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/CHANGELOG.md" $<TARGET_FILE_DIR:UInstaller>)
+add_custom_command(TARGET UInstaller POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/README.md" $<TARGET_FILE_DIR:UInstaller>)
+
 # Copy the UZ executable for the platform
 if (WIN32)
     add_custom_command(TARGET UInstaller POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/UZ/Win" $<TARGET_FILE_DIR:UInstaller>/uz)
