@@ -7,29 +7,17 @@
 FileExtractor::FileExtractor(QObject* parent)
 	: QObject(parent)
 {
-	int flags = ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_ACL | ARCHIVE_EXTRACT_PERM | ARCHIVE_EXTRACT_FFLAGS;
-
-	m_Reader = archive_read_new();
-
-	archive_read_support_format_all(m_Reader);
-	archive_read_support_filter_all(m_Reader);
-
-	m_Writer = archive_write_disk_new();
-
-	archive_write_disk_set_options(m_Writer, flags);
-	archive_write_disk_set_standard_lookup(m_Writer);
 }
 
 FileExtractor::~FileExtractor()
 {
-	if (m_Reader)
-		archive_read_close(m_Reader);
-	if (m_Writer)
-		archive_write_close(m_Writer);
+	CloseStreams();
 }
 
 void FileExtractor::ExtractTo(const std::string& pathToFile, const std::string& dstPath)
 {
+	OpenStreams();
+
 	archive_entry* entry;
 
 	int res = archive_read_open_filename(m_Reader, pathToFile.c_str(), 10240);
@@ -104,10 +92,32 @@ void FileExtractor::ExtractTo(const std::string& pathToFile, const std::string& 
 		}
 	}
 
-	archive_read_close(m_Reader);
-	archive_write_close(m_Writer);
+	CloseStreams();
 
 	emit ExtractionFinished();
+}
+
+void FileExtractor::OpenStreams()
+{
+	int flags = ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_ACL | ARCHIVE_EXTRACT_PERM | ARCHIVE_EXTRACT_FFLAGS;
+
+	m_Reader = archive_read_new();
+
+	archive_read_support_format_all(m_Reader);
+	archive_read_support_filter_all(m_Reader);
+
+	m_Writer = archive_write_disk_new();
+
+	archive_write_disk_set_options(m_Writer, flags);
+	archive_write_disk_set_standard_lookup(m_Writer);
+}
+
+void FileExtractor::CloseStreams()
+{
+	if (m_Reader)
+		archive_read_close(m_Reader);
+	if (m_Writer)
+		archive_write_close(m_Writer);
 }
 
 int FileExtractor::copyData()

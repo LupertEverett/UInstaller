@@ -25,6 +25,8 @@ signals:
 
 private:
 	int copyData();
+	void OpenStreams();
+	void CloseStreams();
 
 	archive* m_Reader;
 	archive* m_Writer;
