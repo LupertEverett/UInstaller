@@ -215,6 +215,11 @@ void UInstaller::handleDownloadFinished(std::string downloadedFilePath)
     }
     catch (std::exception& e)
     {
+        // Close streams if there are any open
+        m_ISOExtractor->CloseStreams();
+        m_CommunityPatchExtractor->CloseStreams();
+        m_BonusPackExtractor->CloseStreams();
+
         QMessageBox::critical(this, "Error", e.what(), QMessageBox::Ok);
         m_StatusLabel->setText("Status: Idle");
         SetEnableForAllFields(true);
@@ -255,14 +260,6 @@ void UInstaller::handleBonusPackDownloadFinished(std::string downloadedFilePath)
 
 void UInstaller::handleCommunityPatchExtractionFinished()
 {
-    if (m_CurrentInstallData == &UnrealTournamentInstallData)
-    {
-        auto gameRootPathStr = m_TargetPathLineEdit->text() + QString(m_CurrentInstallData->gameFolderName.c_str());
-        fs::path gameRootPath(gameRootPathStr.toStdString());
-
-        m_StatusLabel->setText("Decompressing maps, this can take a while.");
-        DecompressMapFiles(gameRootPath);
-    }
     if (m_BonusPackCheckBox->isChecked())
         m_BonusPackDownloader->DownloadFile(*m_CurrentBonusPackInstallData, "");
     else
@@ -412,6 +409,9 @@ void UInstaller::DecompressMapFiles(fs::path gameRootPath)
 #else
     QProcess::execute("./uz", argList);
 #endif
+    // Don't forget to set the working directory path back afterwards
+    // Otherwise UInstaller will try to make a cache folder in uz and download everything again
+    QDir::setCurrent("..");
 
     // Remove the compressed files after the extraction is done.
     mapDirIter = fs::directory_iterator(mapsPath);
@@ -421,7 +421,6 @@ void UInstaller::DecompressMapFiles(fs::path gameRootPath)
         if (entry.is_regular_file() && entry.path().extension() == ".uz")
             fs::remove(entry.path());
     }
-
 }
 
 /* For some reason, extracted folders under Linux can have strange case-sensitivity translation errors 
@@ -458,7 +457,7 @@ void UInstaller::handleLinuxFolderExtractionErrors(fs::path gameRootPath)
 void UInstaller::SetEnableForAllFields(bool value)
 {
     m_GamePickerComboBox->setEnabled(value);
-    m_CommunityPatchPickerComboBox->setEnabled(value);
+    m_CommunityPatchPickerComboBox->setEnabled(m_InstallCommunityPatchCheckBox->isChecked());
     m_InstallCommunityPatchCheckBox->setEnabled(value);
     m_BonusPackCheckBox->setEnabled(value);
     m_StartInstallationButton->setEnabled(value);
