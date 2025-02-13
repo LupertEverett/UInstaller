@@ -28,6 +28,6 @@ signals:
 
 private:
 	int copyData();
-	archive* m_Reader;
-	archive* m_Writer;
+	archive* m_Reader = nullptr;
+	archive* m_Writer = nullptr;
 };
