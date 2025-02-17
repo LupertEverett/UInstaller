@@ -38,10 +38,10 @@ private:
 
     void PerformPostExtraction();
     static void RenameRootFolders(fs::path rootFolderPath); // Make all the root folders (Maps, System, etc.) Capital Case
-    void CleanupSystemFolder(); // Clean the system folder from translation files
+    void CleanupSystemFolder(); // Clear the system folder from translation files
 
     // UT ISO comes with the map files compressed.
-    // This function will call ucc decompress on all the maps.
+    // This function will call uz decompress on all the maps.
     void DecompressMapFiles(fs::path rootFolderPath);
 
     void handleOtherSettings();
