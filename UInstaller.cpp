@@ -121,7 +121,7 @@ void UInstaller::setupConnections()
 
     connect(m_ISOExtractor, &FileExtractor::ExtractionFinished, this, &UInstaller::handleISOExtractionFinished);
     connect(m_CommunityPatchExtractor, &FileExtractor::ExtractionFinished, this, &UInstaller::handleCommunityPatchExtractionFinished);
-    connect(m_BonusPackExtractor, &FileExtractor::ExtractionFinished, this, &UInstaller::handleBP4ExtractionFinished);
+    connect(m_BonusPackExtractor, &FileExtractor::ExtractionFinished, this, &UInstaller::handleBonusPackExtractionFinished);
 }
 
 void UInstaller::handleGamePickerSelectionChanged()
@@ -179,7 +179,12 @@ void UInstaller::handleCommunityPatchCheckboxToggled(bool toggle)
 
 void UInstaller::handleTargetPathLineEditChanged()
 {
-    m_StartInstallationButton->setEnabled(!m_TargetPathLineEdit->text().isEmpty());
+    QString lineEditText = m_TargetPathLineEdit->text();
+
+    if (m_lastInstallationSuccessful)
+        m_StartInstallationButton->setEnabled(!lineEditText.isEmpty() || lineEditText != m_lastTargetPath);
+    else
+        m_StartInstallationButton->setEnabled(!lineEditText.isEmpty());
 }
 
 void UInstaller::handleBrowseButtonPressed()
@@ -195,7 +200,7 @@ void UInstaller::handleBrowseButtonPressed()
 void UInstaller::handleStartButtonPressed()
 {
     SetEnableForAllFields(false);
-
+    m_lastTargetPath = m_TargetPathLineEdit->text();
     m_StatusLabel->setText("Status: Downloading");
     m_fileDownloader->DownloadFile(*m_CurrentInstallData, "");
 }
@@ -219,6 +224,7 @@ void UInstaller::handleDownloadFinished(std::string downloadedFilePath)
         m_CommunityPatchExtractor->CloseStreams();
         m_BonusPackExtractor->CloseStreams();
 
+        m_lastInstallationSuccessful = false;
         QMessageBox::critical(this, "Error", e.what(), QMessageBox::Ok);
         m_StatusLabel->setText("Status: Idle");
         SetEnableForAllFields(true);
@@ -265,7 +271,7 @@ void UInstaller::handleCommunityPatchExtractionFinished()
         AllDone();
 }
 
-void UInstaller::handleBP4ExtractionFinished()
+void UInstaller::handleBonusPackExtractionFinished()
 {
     AllDone();
 }
@@ -323,9 +329,19 @@ void UInstaller::handleOtherSettings()
     }
 }
 
+void UInstaller::DeleteInstallationFolder()
+{
+    fs::path gameRootPath(m_TargetPathLineEdit->text().toStdString());
+    gameRootPath /= m_CurrentInstallData->gameFolderName;
+
+    fs::remove_all(gameRootPath);
+}
+
 void UInstaller::AllDone()
 {
     m_StatusLabel->setText("Status: Done!");
+
+    m_lastInstallationSuccessful = true;
 
     fs::path gamePath(m_TargetPathLineEdit->text().toStdString());
 
@@ -334,6 +350,9 @@ void UInstaller::AllDone()
     QDesktopServices::openUrl(QUrl::fromLocalFile(QString(gamePath.c_str())));
 
     SetEnableForAllFields(true);
+
+    // The user will have to change the path for the start button to activate again
+    m_StartInstallationButton->setEnabled(false);
 }
 
 void UInstaller::RenameRootFolders(fs::path gameRootFolderPath)
@@ -406,9 +425,12 @@ void UInstaller::DecompressMapFiles(fs::path gameRootPath)
     else
     {
         // Uh.. we failed
-        QMessageBox::critical(this, "Error", "Error occured while trying to extract maps. Installation couldn't complete!", QMessageBox::Ok);
+        // We will only remove the installation folder HERE, because in other cases
+        // there is a possibility of the installation failing because there is already a game being installed there
+        DeleteInstallationFolder();
+        m_lastInstallationSuccessful = false;
+        QMessageBox::critical(this, "Error", "Error occured while trying to extract maps. Installation couldn't complete!\nInstallation folder has been cleaned up", QMessageBox::Ok);
         SetEnableForAllFields(true);
-        // Should we also remove the extracted files?
     }
 }
 

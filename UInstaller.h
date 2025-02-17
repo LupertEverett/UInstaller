@@ -48,6 +48,8 @@ private:
 
     void PopulatePatchPicker();
 
+    void DeleteInstallationFolder();
+
     void AllDone();
 
     QGroupBox* m_GamePickerGroupBox;
@@ -90,6 +92,9 @@ private:
 
     MapDecompressDialog* m_mapDecompressDialog;
 
+    bool m_lastInstallationSuccessful = false;
+    QString m_lastTargetPath = "";
+
 private slots:
     void handleGamePickerSelectionChanged();
     void handleCommunityPatchPickerSelectionChanged();
@@ -109,7 +114,7 @@ private slots:
 
     void handleISOExtractionFinished();
     void handleCommunityPatchExtractionFinished();
-    void handleBP4ExtractionFinished();
+    void handleBonusPackExtractionFinished();
 
     void handleLinuxFolderExtractionErrors(fs::path gameRootPath);
 };
