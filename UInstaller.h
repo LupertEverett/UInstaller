@@ -17,6 +17,7 @@
 #include "InstallData.h"
 #include "FileDownloader.h"
 #include "FileExtractor.h"
+#include "MapDecompressDialog.h"
 
 
 class UInstaller : public QWidget
@@ -86,6 +87,8 @@ private:
     FileExtractor* m_ISOExtractor;
     FileExtractor* m_CommunityPatchExtractor;
     FileExtractor* m_BonusPackExtractor;
+
+    MapDecompressDialog* m_mapDecompressDialog;
 
 private slots:
     void handleGamePickerSelectionChanged();

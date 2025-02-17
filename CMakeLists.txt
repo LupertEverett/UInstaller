@@ -54,6 +54,8 @@ set(PROJECT_SOURCES
     FileDownloader.h
     FileExtractor.cpp
     FileExtractor.h
+    MapDecompressDialog.cpp
+    MapDecompressDialog.h
 )
 
 if(WIN32)

@@ -301,8 +301,10 @@ void UInstaller::PerformPostExtraction()
     {
         DecompressMapFiles(gameRootPath);
     }
-
-    handleOtherSettings();
+    else
+    {
+        handleOtherSettings();
+    }
 }
 
 void UInstaller::handleOtherSettings()
@@ -385,40 +387,28 @@ void UInstaller::CleanupSystemFolder()
 
 void UInstaller::DecompressMapFiles(fs::path gameRootPath)
 {
-    m_StatusLabel->setText("Decompressing maps, this can take a while.");
-
     fs::path mapsPath = gameRootPath / "Maps";
 
     auto mapDirIter = fs::directory_iterator(mapsPath);
 
-    QStringList argList;
+    m_mapDecompressDialog = new MapDecompressDialog(this, mapsPath);
 
-    argList += "decompress";
-
-    for (auto& entry: mapDirIter)
+    if (m_mapDecompressDialog->exec())
     {
-        if (entry.is_regular_file() && entry.path().extension() == ".uz")
-            argList.push_back(QString(entry.path().c_str()));
+        for (auto& entry : mapDirIter)
+        {
+            if (entry.is_regular_file() && entry.path().extension() == ".uz")
+                fs::remove(entry.path());
+        }
+
+        handleOtherSettings();
     }
-
-    // UZ COMES TO THE RESCUE!!!
-    QDir::setCurrent("uz");
-#ifdef WIN32
-    QProcess::execute("uz.exe", argList);
-#else
-    QProcess::execute("./uz", argList);
-#endif
-    // Don't forget to set the working directory path back afterwards
-    // Otherwise UInstaller will try to make a cache folder in uz and download everything again
-    QDir::setCurrent("..");
-
-    // Remove the compressed files after the extraction is done.
-    mapDirIter = fs::directory_iterator(mapsPath);
-
-    for (auto& entry : mapDirIter)
+    else
     {
-        if (entry.is_regular_file() && entry.path().extension() == ".uz")
-            fs::remove(entry.path());
+        // Uh.. we failed
+        QMessageBox::critical(this, "Error", "Error occured while trying to extract maps. Installation couldn't complete!", QMessageBox::Ok);
+        SetEnableForAllFields(true);
+        // Should we also remove the extracted files?
     }
 }
 
