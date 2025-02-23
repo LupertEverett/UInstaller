@@ -43,6 +43,8 @@ UInstaller::UInstaller(QWidget* parent)
     m_DownloadProgressBar->setMinimum(0);
 
     m_StatusLabel = new QLabel("Status: Idle");
+    m_InstallationFolderExistsLabel = new QLabel("<b>Installation folder already exists!</b>");
+    m_InstallationFolderExistsLabel->setVisible(false);
 #ifndef WIN32
     m_wineRequiredLabel = new QLabel("<b>Note:</b> You\'ll need to use Wine to run the game.");
 #endif
@@ -97,6 +99,7 @@ void UInstaller::prepareLayout()
     main_layout->addWidget(m_GamePickerGroupBox);
     main_layout->addWidget(m_GameSettingsGroupBox);
     main_layout->addLayout(install_path_layout);
+    main_layout->addWidget(m_InstallationFolderExistsLabel);
     main_layout->addWidget(m_DownloadProgressBar);
     main_layout->addLayout(bottom_button_layout);
 
@@ -112,7 +115,7 @@ void UInstaller::setupConnections()
 
     connect(m_InstallCommunityPatchCheckBox, &QCheckBox::toggled, this, &UInstaller::handleCommunityPatchCheckboxToggled);
 
-    connect(m_TargetPathLineEdit, &QLineEdit::textChanged, this, &UInstaller::handleTargetPathLineEditChanged);
+    connect(m_TargetPathLineEdit, &QLineEdit::textChanged, this, &UInstaller::checkIfInstallationStartable);
 
     connect(m_BrowseFolderButton, &QPushButton::pressed, this, &UInstaller::handleBrowseButtonPressed);
     connect(m_StartInstallationButton, &QPushButton::pressed, this, &UInstaller::handleStartButtonPressed);
@@ -148,6 +151,8 @@ void UInstaller::handleGamePickerSelectionChanged()
         m_CurrentBonusPackInstallData = &UTBonusPack4InstallData;
         m_BonusPackCheckBox->setText("Also install Bonus Pack 4?");
     }
+
+    checkIfInstallationStartable();
 
     PopulatePatchPicker();
 }
@@ -186,14 +191,35 @@ void UInstaller::handleCommunityPatchCheckboxToggled(bool toggle)
 #endif
 }
 
-void UInstaller::handleTargetPathLineEditChanged()
+void UInstaller::checkIfInstallationStartable()
 {
     QString lineEditText = m_TargetPathLineEdit->text();
 
-    if (m_lastInstallationSuccessful)
-        m_StartInstallationButton->setEnabled(!lineEditText.isEmpty() || lineEditText != m_lastTargetPath);
+    if (lineEditText.isEmpty())
+        m_StartInstallationButton->setEnabled(false);
+    else if (checkIfTargetFolderExists())
+    {
+        m_InstallationFolderExistsLabel->setVisible(true);
+        m_StartInstallationButton->setEnabled(false);
+    }
     else
-        m_StartInstallationButton->setEnabled(!lineEditText.isEmpty());
+    {
+        m_InstallationFolderExistsLabel->setVisible(false);
+        m_StartInstallationButton->setEnabled(true);
+    }
+}
+
+bool UInstaller::checkIfTargetFolderExists()
+{
+    auto text = m_TargetPathLineEdit->text();
+
+    if (text.isEmpty())
+        return false;
+
+    fs::path targetPath(text.toStdString());
+    targetPath /= m_CurrentInstallData->gameFolderName;
+
+    return fs::exists(targetPath) && fs::is_directory(targetPath);
 }
 
 void UInstaller::handleBrowseButtonPressed()
@@ -209,7 +235,6 @@ void UInstaller::handleBrowseButtonPressed()
 void UInstaller::handleStartButtonPressed()
 {
     SetEnableForAllFields(false);
-    m_lastTargetPath = m_TargetPathLineEdit->text();
     m_StatusLabel->setText("Status: Downloading");
     m_fileDownloader->DownloadFile(*m_CurrentInstallData, "");
 }
@@ -233,7 +258,6 @@ void UInstaller::handleDownloadFinished(std::string downloadedFilePath)
         m_CommunityPatchExtractor->CloseStreams();
         m_BonusPackExtractor->CloseStreams();
 
-        m_lastInstallationSuccessful = false;
         QMessageBox::critical(this, "Error", e.what(), QMessageBox::Ok);
         m_StatusLabel->setText("Status: Idle");
         SetEnableForAllFields(true);
@@ -351,8 +375,6 @@ void UInstaller::AllDone()
 {
     m_StatusLabel->setText("Status: Done!");
 
-    m_lastInstallationSuccessful = true;
-
     fs::path gamePath(m_TargetPathLineEdit->text().toStdString());
 
     gamePath /= m_CurrentInstallData->gameFolderName;
@@ -361,7 +383,7 @@ void UInstaller::AllDone()
 
     SetEnableForAllFields(true);
 
-    // The user will have to change the path for the start button to activate again
+    // The user will have to change the path (or the game) for the start button to activate again
     m_StartInstallationButton->setEnabled(false);
 }
 
@@ -461,7 +483,6 @@ void UInstaller::DecompressMapFiles(fs::path gameRootPath)
         // We will only remove the installation folder HERE, because in other cases
         // there is a possibility of the installation failing because there is already a game being installed there
         DeleteInstallationFolder();
-        m_lastInstallationSuccessful = false;
         QMessageBox::critical(this, "Error", "Error occured while trying to extract maps. Installation couldn't complete!\nInstallation folder has been cleaned up", QMessageBox::Ok);
         SetEnableForAllFields(true);
     }

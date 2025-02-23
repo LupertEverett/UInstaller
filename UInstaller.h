@@ -62,6 +62,7 @@ private:
     QProgressBar* m_DownloadProgressBar;
 
     QLabel* m_StatusLabel;
+    QLabel* m_InstallationFolderExistsLabel;
 #ifndef WIN32
     QLabel* m_wineRequiredLabel;
 #endif
@@ -96,15 +97,14 @@ private:
 
     MapDecompressDialog* m_mapDecompressDialog;
 
-    bool m_lastInstallationSuccessful = false;
-    QString m_lastTargetPath = "";
-
 private slots:
     void handleGamePickerSelectionChanged();
     void handleCommunityPatchPickerSelectionChanged();
     void handleCommunityPatchCheckboxToggled(bool toggle);
 
-    void handleTargetPathLineEditChanged();
+    void checkIfInstallationStartable();
+
+    bool checkIfTargetFolderExists();
 
     void handleBrowseButtonPressed();
     void handleStartButtonPressed();
