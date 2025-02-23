@@ -298,6 +298,7 @@ void UInstaller::PerformPostExtraction()
     gameRootPath /= m_CurrentInstallData->gameFolderName;
 
     RenameRootFolders(gameRootPath);
+    RemoveUselessFolders();
 #ifndef WIN32
     handleLinuxFolderExtractionErrors(gameRootPath);
 #endif
@@ -402,6 +403,29 @@ void UInstaller::CleanupSystemFolder()
             }
         }
     }
+}
+
+void UInstaller::RemoveUselessFolders()
+{
+    fs::path gamePath(m_TargetPathLineEdit->text().toStdString());
+    gamePath /= m_CurrentInstallData->gameFolderName;
+
+    std::vector<std::string> uselessFolders {
+        "Directx7",
+        "Gamespy",
+        "Microsoft",
+        "Netgamesusa.com",
+        "System400"
+    };
+
+    for (auto& folderName : uselessFolders)
+    {
+        if (fs::exists(gamePath / folderName) && fs::is_directory(gamePath / folderName))
+            fs::remove_all(gamePath / folderName);
+    }
+
+    if (fs::exists(gamePath / "Setup.exe") && fs::is_regular_file(gamePath / "Setup.exe"))
+        fs::remove(gamePath / "Setup.exe");
 }
 
 void UInstaller::DecompressMapFiles(fs::path gameRootPath)
