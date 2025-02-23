@@ -18,7 +18,7 @@ UInstaller::UInstaller(QWidget* parent)
     m_CommunityPatchExtractor(new FileExtractor(this)),
     m_BonusPackExtractor(new FileExtractor(this))
 {
-    this->setWindowTitle("UInstaller");
+    this->setWindowTitle("UInstaller v2");
 
     m_GamePickerGroupBox = new QGroupBox("Game");
     m_GameSettingsGroupBox = new QGroupBox("Game Settings");
