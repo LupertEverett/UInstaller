@@ -13,6 +13,7 @@
   * The main reason behind this is that they are the patches that have zipped versions.
 * Added installation support for UT 469e_RC7.
 * Added ability to install the Fusion map pack for Unreal Gold.
+* On Linux, UInstaller will warn about needing Wine to play the games when the community patches aren't installed.
 
 ## Version 1.1:
 * When installing UT, decompress the maps using ucc. (Note that the app might look frozen while that happens. Just let it get the work done.)

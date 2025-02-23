@@ -43,6 +43,9 @@ UInstaller::UInstaller(QWidget* parent)
     m_DownloadProgressBar->setMinimum(0);
 
     m_StatusLabel = new QLabel("Status: Idle");
+#ifndef WIN32
+    m_wineRequiredLabel = new QLabel("<b>Note:</b> You\'ll need to use Wine to run the game.");
+#endif
 
     m_InstallCommunityPatchCheckBox = new QCheckBox("Also install the community patches (227/469)?");
     m_BonusPackCheckBox = new QCheckBox("Also install Fusion Map Pack?");
@@ -72,6 +75,9 @@ void UInstaller::prepareLayout()
     game_settings_group_layout = new QVBoxLayout(this);
 
     game_settings_group_layout->addWidget(m_InstallCommunityPatchCheckBox);
+#ifndef WIN32
+    game_settings_group_layout->addWidget(m_wineRequiredLabel);
+#endif
     game_settings_group_layout->addLayout(patch_picker_group_layout);
     game_settings_group_layout->addWidget(m_BonusPackCheckBox);
 
@@ -175,6 +181,9 @@ void UInstaller::handleCommunityPatchPickerSelectionChanged()
 void UInstaller::handleCommunityPatchCheckboxToggled(bool toggle)
 {
     m_CommunityPatchPickerComboBox->setEnabled(toggle);
+#ifndef WIN32
+    m_wineRequiredLabel->setVisible(!toggle);
+#endif
 }
 
 void UInstaller::handleTargetPathLineEditChanged()

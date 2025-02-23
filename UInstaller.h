@@ -62,6 +62,9 @@ private:
     QProgressBar* m_DownloadProgressBar;
 
     QLabel* m_StatusLabel;
+#ifndef WIN32
+    QLabel* m_wineRequiredLabel;
+#endif
 
     // Setting checkboxes
     QCheckBox* m_InstallCommunityPatchCheckBox;
