@@ -5,7 +5,7 @@
 * Map decompression process now happens in a separate dialog window, which fixes the "app looking frozen" issue.
   * When the decompression succeeds, it will close down on its own, to continue with the rest of the installation.
   * When the decompression fails, it will notify the user, and make them close the dialog by themselves instead.
-  * Also remove the installation folder when decompression fails.
+  * Also removes the installation folder when decompression fails.
 * Disable the Start button once the installation is successful, until the user picks up another path.
 * Fixed the awkward "Cannot find file" error once UInstaller installs a game then the user asks to install another, despite the file existing.
 * One can now install different versions of the 227/469 community patches.
